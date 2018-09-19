@@ -1,0 +1,120 @@
+{
+  "name": "nobushi-bookmarks",
+  "version": "0.0.0",
+  "author": "YAMADA Koji <kou64yama@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": "^8.12.0",
+    "npm": "^5.6.0"
+  },
+  "dependencies": {
+    "electron": "^3.0.0",
+    "vue": "^2.5.17",
+    "vue-class-component": "^6.2.0",
+    "vue-router": "^3.0.1",
+    "vuetify": "^1.2.4",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@types/chokidar": "^1.7.5",
+    "@types/glob": "^5.0.35",
+    "@types/jest": "^23.3.2",
+    "@types/mkdirp": "^0.5.2",
+    "@types/node": "^10.10.1",
+    "@types/rimraf": "^2.0.2",
+    "@types/webpack": "^4.4.12",
+    "@types/webpack-bundle-analyzer": "^2.13.0",
+    "@types/webpack-env": "^1.13.6",
+    "@vue/test-utils": "^1.0.0-beta.25",
+    "autoprefixer": "^9.1.5",
+    "babel-core": "^7.0.0-bridge.0",
+    "chokidar": "^2.0.4",
+    "css-loader": "^1.0.0",
+    "file-loader": "^2.0.0",
+    "glob": "^7.1.3",
+    "husky": "^0.14.3",
+    "jest": "^23.6.0",
+    "jest-serializer-vue": "^2.0.2",
+    "lint-staged": "^7.2.2",
+    "mkdirp": "^0.5.1",
+    "null-loader": "^0.1.1",
+    "opn-cli": "^3.1.0",
+    "pixrem": "^4.0.1",
+    "pleeease-filters": "^4.0.0",
+    "postcss-calc": "^6.0.1",
+    "postcss-color-function": "^4.0.1",
+    "postcss-custom-media": "^7.0.2",
+    "postcss-custom-properties": "^8.0.3",
+    "postcss-custom-selectors": "^5.1.1",
+    "postcss-flexbugs-fixes": "^4.1.0",
+    "postcss-import": "^12.0.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-media-minmax": "^4.0.0",
+    "postcss-nested": "^4.1.0",
+    "postcss-nesting": "^7.0.0",
+    "postcss-selector-matches": "^4.0.0",
+    "postcss-selector-not": "^4.0.0",
+    "prettier": "^1.14.2",
+    "raw-loader": "^0.5.1",
+    "rimraf": "^2.6.2",
+    "stylelint": "^9.5.0",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-order": "^1.0.0",
+    "svg-url-loader": "^2.3.2",
+    "ts-jest": "^23.10.1",
+    "ts-loader": "^5.1.1",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "tslint-plugin-prettier": "^2.0.0",
+    "typescript": "^3.0.3",
+    "url-loader": "^1.1.1",
+    "vue-hot-reload-api": "^2.3.0",
+    "vue-jest": "^2.6.0",
+    "vue-loader": "^15.4.2",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.19.1",
+    "webpack-bundle-analyzer": "^3.0.2"
+  },
+  "lint-staged": {
+    "ignore": [
+      "package.json"
+    ],
+    "linters": {
+      "*.{ts,tsx}": [
+        "tslint --fix",
+        "git add --force"
+      ],
+      "*.{json,md,graphql}": [
+        "prettier --write",
+        "git add --force"
+      ],
+      "*.{css,less,styl,scss,sass,sss}": [
+        "stylelint --fix",
+        "git add --force"
+      ]
+    }
+  },
+  "scripts": {
+    "precommit": "lint-staged",
+    "lint-ts": "tslint --project .",
+    "lint-css": "stylelint \"src/**/*.{css,less,styl,scss,sass,sss}\"",
+    "lint": "yarn run lint-ts && yarn run lint-css",
+    "fix-ts": "yarn run lint-ts --fix",
+    "fix-css": "yarn run lint-css --fix",
+    "fix": "yarn run fix-ts && yarn run fix-css",
+    "test": "jest",
+    "test-watch": "yarn run test --watch --notify",
+    "test-cover": "yarn run test --coverage",
+    "coverage": "yarn run test-cover && opn coverage/lcov-report/index.html",
+    "clean": "ts-node tools/run clean",
+    "copy": "ts-node tools/run copy",
+    "bundle": "ts-node tools/run bundle",
+    "build": "ts-node tools/run build",
+    "build-stats": "yarn run build --release --analyse",
+    "start": "ts-node tools/run start"
+  }
+}

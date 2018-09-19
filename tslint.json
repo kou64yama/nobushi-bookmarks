@@ -1,0 +1,21 @@
+{
+  "extends": ["tslint-config-airbnb", "tslint-config-prettier"],
+
+  "rulesDirectory": ["tslint-plugin-prettier"],
+
+  "rules": {
+    // https://palantir.github.io/tslint/rules/variable-name/
+    "variable-name": [true, "allow-leading-underscore"],
+
+    // https://github.com/Microsoft/tslint-microsoft-contrib#readme
+    "function-name": false,
+    "import-name": false,
+
+    // https://github.com/ikatyang/tslint-plugin-prettier#readme
+    "prettier": true
+  },
+
+  "linterOptions": {
+    "exclude": ["*.json"]
+  }
+}
