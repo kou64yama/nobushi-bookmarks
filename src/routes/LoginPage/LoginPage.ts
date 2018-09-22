@@ -4,7 +4,7 @@ import { mapState } from 'vuex';
 
 @Component({
   computed: {
-    ...mapState('auth', ['error', 'loading']),
+    ...mapState('auth', ['loading']),
   },
 })
 export default class LoginPage extends Vue {
