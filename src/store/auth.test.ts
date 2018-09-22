@@ -1,4 +1,4 @@
-import Vuex, { ActionContext, Mutation } from 'vuex';
+import Vuex, { ActionContext, Mutation, MutationTree, ActionTree } from 'vuex';
 import { createLocalVue } from '@vue/test-utils';
 import firebase from '@/firebase';
 import { State as RootState } from '@/store';
@@ -15,11 +15,6 @@ const localVue = createLocalVue();
 
 localVue.use(Vuex);
 
-type ActionHandler<S, R> = (
-  injectee: ActionContext<S, R>,
-  payload?: any,
-) => any;
-
 const mockUser = {
   displayName: 'mockDisplayName',
   email: 'mockEmail',
@@ -32,16 +27,17 @@ const mockUser = {
 const createInitialState = auth.state as () => State;
 
 describe('mutations', () => {
-  const mutations = auth.mutations || {};
+  const mutations = auth.mutations as MutationTree<State>;
 
   describe(`#${SET_CURRENT_USER}()`, () => {
     const setCurrentUser = mutations[SET_CURRENT_USER] as Mutation<State>;
 
     it('should set currentUser and clear loading', () => {
-      const state = Object.assign(createInitialState(), {
+      const state = {
+        ...createInitialState(),
         currentUser: null,
         loading: true,
-      });
+      };
 
       setCurrentUser(state, mockUser);
 
@@ -54,10 +50,11 @@ describe('mutations', () => {
     const clearCurrentUser = mutations[CLEAR_CURRENT_USER] as Mutation<State>;
 
     it('should clear currentUser and loading', () => {
-      const state = Object.assign(createInitialState(), {
+      const state = {
+        ...createInitialState(),
         currentUser: mockUser,
         loading: true,
-      });
+      };
 
       clearCurrentUser(state, undefined);
 
@@ -70,10 +67,11 @@ describe('mutations', () => {
     const signIn = mutations[SIGN_IN] as Mutation<State>;
 
     it('should set loading true', () => {
-      const state = Object.assign(createInitialState(), {
+      const state = {
+        ...createInitialState(),
         currentUser: null,
         loading: false,
-      });
+      };
 
       signIn(state, undefined);
 
@@ -85,10 +83,11 @@ describe('mutations', () => {
     const signOut = mutations[SIGN_OUT] as Mutation<State>;
 
     it('should set loading true', () => {
-      const state = Object.assign(createInitialState(), {
+      const state = {
+        ...createInitialState(),
         currentUser: null,
         loading: false,
-      });
+      };
 
       signOut(state, undefined);
 
@@ -98,7 +97,7 @@ describe('mutations', () => {
 });
 
 describe('actions', () => {
-  const actions = auth.actions || {};
+  const actions = auth.actions as ActionTree<State, RootState>;
 
   describe('#init()', () => {
     const init = actions.init as ActionHandler<State, RootState>;
