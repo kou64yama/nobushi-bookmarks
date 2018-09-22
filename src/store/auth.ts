@@ -7,10 +7,10 @@ export interface State {
   loading: boolean;
 }
 
-const SET_CURRENT_USER = 'SET_CURRENT_USER';
-const CLEAR_CURRENT_USER = 'CLEAR_CURRENT_USER';
-const SIGN_IN = 'SIGN_IN';
-const SIGN_OUT = 'SIGN_OUT';
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+export const CLEAR_CURRENT_USER = 'CLEAR_CURRENT_USER';
+export const SIGN_IN = 'SIGN_IN';
+export const SIGN_OUT = 'SIGN_OUT';
 
 export default {
   namespaced: true,
