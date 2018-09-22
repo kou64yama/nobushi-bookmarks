@@ -12,6 +12,8 @@ function createWindow() {
 
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
+    frame: false,
+    thickFrame: true,
     titleBarStyle: 'hidden',
   });
   mainWindow.on('close', () => {
