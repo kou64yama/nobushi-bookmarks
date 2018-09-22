@@ -47,6 +47,7 @@ const vm = new Vue({
   render: h => h(App),
 });
 
-router.onReady(() => {
+store.dispatch('auth/init');
+router.onReady(async () => {
   vm.$mount('#app');
 });

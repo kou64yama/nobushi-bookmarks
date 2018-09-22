@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`HomePage #render() should render correctly 1`] = `
+exports[`HomePage should render correctly 1`] = `
 <vcontainer-stub
   fill-height=""
   justify-center=""
