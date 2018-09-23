@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Vuex from 'vuex';
+import Vuex, { Module } from 'vuex';
 import createLogger from 'vuex/dist/logger';
 import Vuetify from 'vuetify';
 import routes from '@/routes';
@@ -25,8 +25,18 @@ const router = new Router({
 // Store
 // ---------------------------------------------------------------------
 
+const app: Module<{}, State> = {
+  namespaced: true,
+  getters: {
+    platform: () => process.platform,
+  },
+  actions: {
+    close: () => window.close(),
+  },
+};
+
 const store = new Vuex.Store<State>({
-  modules,
+  modules: { ...modules, app },
   strict: __DEV__,
   plugins: __DEV__ ? [createLogger({ collapsed: true })] : [],
 });
