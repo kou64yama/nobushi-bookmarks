@@ -10,12 +10,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Component from 'vue-class-component';
 import { mapState } from 'vuex';
 import AppTitleBar from '@/components/AppTitleBar';
 import LoginPage from '@/routes/LoginPage';
 
-@Component({
+export default Vue.extend({
   components: {
     AppTitleBar,
     LoginPage,
@@ -24,8 +23,6 @@ import LoginPage from '@/routes/LoginPage';
     ...mapState('auth', ['currentUser']),
   },
 })
-export default class App extends Vue {
-}
 </script>
 
 <style src="../node_modules/vuetify/dist/vuetify.css"></style>

@@ -1,8 +1,7 @@
 import Vue from 'vue';
-import Component from 'vue-class-component';
 import { mapActions, mapGetters, mapState } from 'vuex';
 
-@Component({
+export default Vue.extend({
   computed: {
     ...mapGetters('app', ['platform']),
     ...mapState('document', ['title']),
@@ -12,5 +11,4 @@ import { mapActions, mapGetters, mapState } from 'vuex';
     ...mapActions('app', ['close']),
     ...mapActions('auth', ['signOut']),
   },
-})
-export default class AppTitleBar extends Vue {}
+});

@@ -31,7 +31,7 @@
       </v-list>
       <v-divider/>
       <v-list class="py-0">
-        <v-list-tile @click="signOut">
+        <v-list-tile ref="signOut" @click="signOut">
           <v-list-tile-action>
             <v-icon>exit_to_app</v-icon>
           </v-list-tile-action>
@@ -41,7 +41,7 @@
         </v-list-tile>
       </v-list>
     </v-menu>
-    <v-icon class="btn" @click="close" v-if="platform !== 'darwin'">
+    <v-icon ref="close" class="btn" @click="close" v-if="platform !== 'darwin'">
       close
     </v-icon>
   </v-system-bar>

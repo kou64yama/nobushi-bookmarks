@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppTitleBar should render correctly with currentUser 1`] = `
+<vsystembar-stub
+  app=""
+  class="title-bar"
+  color="primary"
+  dark=""
+  window=""
+>
+  <vspacer-stub />
+  
+  Test Title
+  
+  <vspacer-stub />
+   
+  <vmenu-stub
+    offset-y=""
+  >
+    <vbtn-stub
+      class="btn mr-4"
+      color="red"
+      style="min-width: initial;"
+    >
+      <vicon-stub
+        class="mr-0"
+      >
+        person
+      </vicon-stub>
+    </vbtn-stub>
+     
+    <vlist-stub
+      class="py-0"
+      two-line=""
+    >
+      <vlisttile-stub>
+        <vlisttileavatar-stub
+          color="grey lighten-1"
+        >
+          <img
+            src="mockPhotoURL"
+          />
+        </vlisttileavatar-stub>
+         
+        <vlisttilecontent-stub>
+          <vlisttiletitle-stub>
+            
+            mockDisplayName
+          
+          </vlisttiletitle-stub>
+           
+          <vlisttilesubtitle-stub>
+            
+            mockEmail
+          
+          </vlisttilesubtitle-stub>
+        </vlisttilecontent-stub>
+      </vlisttile-stub>
+    </vlist-stub>
+     
+    <vdivider-stub />
+     
+    <vlist-stub
+      class="py-0"
+    >
+      <vlisttile-stub>
+        <vlisttileaction-stub>
+          <vicon-stub>
+            exit_to_app
+          </vicon-stub>
+        </vlisttileaction-stub>
+         
+        <vlisttilecontent-stub>
+          <vlisttiletitle-stub>
+            Sign out
+          </vlisttiletitle-stub>
+        </vlisttilecontent-stub>
+      </vlisttile-stub>
+    </vlist-stub>
+  </vmenu-stub>
+   
+  <vicon-stub
+    class="btn"
+  >
+    
+    close
+  
+  </vicon-stub>
+</vsystembar-stub>
+`;
+
+exports[`AppTitleBar should render correctly without currentUser 1`] = `
+<vsystembar-stub
+  app=""
+  class="title-bar"
+  color="primary"
+  dark=""
+  window=""
+>
+  <vspacer-stub />
+  
+  Test Title
+  
+  <vspacer-stub />
+   
+  <vmenu-stub
+    offset-y=""
+  >
+    <vbtn-stub
+      class="btn mr-4"
+      color="red"
+      disabled="true"
+      style="min-width: initial;"
+    >
+      <vicon-stub
+        class="mr-0"
+      >
+        person
+      </vicon-stub>
+    </vbtn-stub>
+     
+    <!---->
+     
+    <vdivider-stub />
+     
+    <vlist-stub
+      class="py-0"
+    >
+      <vlisttile-stub>
+        <vlisttileaction-stub>
+          <vicon-stub>
+            exit_to_app
+          </vicon-stub>
+        </vlisttileaction-stub>
+         
+        <vlisttilecontent-stub>
+          <vlisttiletitle-stub>
+            Sign out
+          </vlisttiletitle-stub>
+        </vlisttilecontent-stub>
+      </vlisttile-stub>
+    </vlist-stub>
+  </vmenu-stub>
+   
+  <vicon-stub
+    class="btn"
+  >
+    
+    close
+  
+  </vicon-stub>
+</vsystembar-stub>
+`;
