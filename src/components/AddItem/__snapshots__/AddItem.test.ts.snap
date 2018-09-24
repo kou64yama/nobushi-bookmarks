@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddItem should render correctly 1`] = `
+<vdialog-stub
+  width="480"
+>
+  <vbtn-stub
+    bottom=""
+    color="primary"
+    fab=""
+    fixed=""
+    right=""
+  >
+    <vicon-stub>
+      add
+    </vicon-stub>
+  </vbtn-stub>
+   
+  <vcard-stub>
+    <vcardtext-stub>
+      <vtextfield-stub
+        error-messages=""
+        label="Name"
+        name="name"
+      />
+       
+      <vtextfield-stub
+        error-messages=""
+        label="URL"
+        name="url"
+      />
+       
+      <vtextarea-stub
+        error-messages=""
+        label="Description"
+        name="description"
+      />
+    </vcardtext-stub>
+     
+    <vcardactions-stub>
+      <vspacer-stub />
+       
+      <vbtn-stub
+        color="primary"
+        flat=""
+      >
+        
+        Cancel
+      
+      </vbtn-stub>
+       
+      <vbtn-stub
+        color="primary"
+        depressed=""
+      >
+        
+        Add
+      
+      </vbtn-stub>
+    </vcardactions-stub>
+  </vcard-stub>
+</vdialog-stub>
+`;
+
+exports[`AddItem should render correctly when loading 1`] = `
+<vdialog-stub
+  width="480"
+>
+  <vbtn-stub
+    bottom=""
+    color="primary"
+    fab=""
+    fixed=""
+    loading="true"
+    right=""
+  >
+    <vicon-stub>
+      add
+    </vicon-stub>
+  </vbtn-stub>
+   
+  <vcard-stub>
+    <vcardtext-stub>
+      <vtextfield-stub
+        error-messages=""
+        label="Name"
+        name="name"
+      />
+       
+      <vtextfield-stub
+        error-messages=""
+        label="URL"
+        name="url"
+      />
+       
+      <vtextarea-stub
+        error-messages=""
+        label="Description"
+        name="description"
+      />
+    </vcardtext-stub>
+     
+    <vcardactions-stub>
+      <vspacer-stub />
+       
+      <vbtn-stub
+        color="primary"
+        flat=""
+        loading="true"
+      >
+        
+        Cancel
+      
+      </vbtn-stub>
+       
+      <vbtn-stub
+        color="primary"
+        depressed=""
+        loading="true"
+      >
+        
+        Add
+      
+      </vbtn-stub>
+    </vcardactions-stub>
+  </vcard-stub>
+</vdialog-stub>
+`;

@@ -1,5 +1,5 @@
 import Vuex, { Store, Dispatch } from 'vuex';
-import { mount, createLocalVue } from '@vue/test-utils';
+import { shallowMount, createLocalVue } from '@vue/test-utils';
 import HomePage from './HomePage.vue';
 
 const localVue = createLocalVue();
@@ -7,16 +7,14 @@ const localVue = createLocalVue();
 localVue.use(Vuex);
 
 describe('HomePage', () => {
-  let store: Store<any>;
-  let dispatch: jest.Mock<Dispatch>;
-
-  beforeEach(() => {
-    store = new Vuex.Store({});
-    dispatch = store.dispatch = jest.fn<Dispatch>();
-  });
+  const createStore = () =>
+    Object.assign(new Vuex.Store({}), {
+      dispatch: jest.fn(),
+    });
 
   it('should render correctly', () => {
-    const wrapper = mount(HomePage, {
+    const store = createStore();
+    const wrapper = shallowMount(HomePage, {
       localVue,
       store,
       stubs: {
@@ -25,6 +23,6 @@ describe('HomePage', () => {
     });
 
     expect(wrapper.element).toMatchSnapshot();
-    expect(dispatch.mock.calls[0][0]).toEqual('document/setTitle');
+    expect(store.dispatch.mock.calls[0][0]).toEqual('document/setTitle');
   });
 });

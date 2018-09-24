@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Vuex, { Module } from 'vuex';
+import Vuex, { Module, Payload, MutationPayload } from 'vuex';
 import createLogger from 'vuex/dist/logger';
 import Vuetify from 'vuetify';
 import routes from '@/routes';
 import App from '@/App.vue';
 import modules, { State } from '@/store';
+import { ipcRenderer, IpcMessageEvent } from 'electron';
 
 Vue.config.productionTip = __DEV__;
 
@@ -25,19 +26,13 @@ const router = new Router({
 // Store
 // ---------------------------------------------------------------------
 
-const app: Module<{}, State> = {
-  namespaced: true,
+const store = new Vuex.Store<State>({
+  modules,
+  strict: __DEV__,
   getters: {
     platform: () => process.platform,
+    close: () => () => window.close(),
   },
-  actions: {
-    close: () => window.close(),
-  },
-};
-
-const store = new Vuex.Store<State>({
-  modules: { ...modules, app },
-  strict: __DEV__,
   plugins: __DEV__ ? [createLogger({ collapsed: true })] : [],
 });
 
@@ -46,6 +41,34 @@ store.subscribe(mutation => {
     document.title = mutation.payload;
   }
 });
+
+let currentId = 0;
+store.dispatch = async (type: string | Payload, payload?: any) =>
+  new Promise<any>((resolve, reject) => {
+    if (typeof type === 'object') {
+      payload = { ...type }; // tslint:disable-line no-parameter-reassignment
+      type = type.type; // tslint:disable-line no-parameter-reassignment
+      delete payload.type;
+    }
+
+    const id = (currentId += 1);
+    ipcRenderer.send('dispatch', id, type, payload);
+    ipcRenderer.once(
+      `dispatch:${id}`,
+      (_: IpcMessageEvent, err: any, value: any) =>
+        err ? reject(err) : resolve(value),
+    );
+  });
+
+ipcRenderer.on('initialState', (_: IpcMessageEvent, initialState: State) => {
+  store.replaceState(initialState);
+});
+
+ipcRenderer.on('commit', (_: IpcMessageEvent, mutation: MutationPayload) => {
+  store.commit(mutation.type, mutation.payload);
+});
+
+ipcRenderer.send('connect');
 
 //
 // Mount
@@ -57,7 +80,6 @@ const vm = new Vue({
   render: h => h(App),
 });
 
-store.dispatch('auth/init');
 router.onReady(async () => {
   vm.$mount('#app');
 });

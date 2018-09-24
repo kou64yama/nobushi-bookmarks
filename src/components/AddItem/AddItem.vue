@@ -1,0 +1,59 @@
+<template>
+  <v-dialog width="480" v-model="open">
+    <v-btn
+      fab
+      fixed
+      bottom
+      right
+      :loading="loading"
+      color="primary"
+      slot="activator"
+    >
+      <v-icon>add</v-icon>
+    </v-btn>
+    <v-card>
+      <v-card-text>
+        <v-text-field
+          label="Name"
+          name="name"
+          :error-messages="getFieldErrors('name')"
+          v-model="name"
+        />
+        <v-text-field
+          label="URL"
+          name="url"
+          :error-messages="getFieldErrors('url')"
+          v-model="url"
+        />
+        <v-textarea
+          label="Description"
+          name="description"
+          :error-messages="getFieldErrors('description')"
+          v-model="description"
+        />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer/>
+        <v-btn
+          flat
+          color="primary"
+          :loading="loading"
+          @click.native="open = false"
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          depressed
+          ref="add"
+          color="primary"
+          :loading="loading"
+          @click.native="submit"
+        >
+          Add
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script lang="ts" src="./AddItem.ts"></script>

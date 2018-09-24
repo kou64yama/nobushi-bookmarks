@@ -2,11 +2,9 @@
 
 exports[`HomePage should render correctly 1`] = `
 <vcontainer-stub
-  fill-height=""
-  justify-center=""
+  class="pa-0"
+  fluid=""
 >
-  <h1>
-    It works!
-  </h1>
+  <itemlist-stub />
 </vcontainer-stub>
 `;

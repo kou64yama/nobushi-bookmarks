@@ -1,12 +1,12 @@
 import document, { State as DocumentState } from './document';
-import auth, { State as AuthState } from './auth';
+import items, { State as ItemsState } from './items';
 
 export interface State {
   document: DocumentState;
-  auth: AuthState;
+  items: ItemsState;
 }
 
 export default {
   document,
-  auth,
+  items,
 };
