@@ -81,6 +81,9 @@
     "webpack": "^4.19.1",
     "webpack-bundle-analyzer": "^3.0.2"
   },
+  "babel": {
+    "inputSourceMap": true
+  },
   "lint-staged": {
     "ignore": [
       "package.json"
