@@ -34,12 +34,10 @@ module.exports = {
 
   // https://facebook.github.io/jest/docs/en/configuration.html#collectcoveragefrom-array
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/main.ts',
-    '!src/renderer.ts',
-    '!src/store/index.ts',
-    '!src/components/**',
-    '!src/routes/**',
+    'src/**/*.{ts,tsx,vue}',
+    '!src/{main,renderer}.ts',
+    '!src/{routes,store}/index.ts',
+    '!src/{components,routes}/*/{index,[A-Z]*}.ts',
     '!**/node_modules/**',
     '!**/vendor/**',
   ],

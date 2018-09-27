@@ -7,10 +7,10 @@
  * LICENSE.txt file in https://github.com/kriasoft/react-starter-kit.
  */
 
-import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import tsConfig from '../tsconfig.json';
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin'); // tslint:disable-line
 
@@ -83,6 +83,11 @@ const config: webpack.Configuration = {
         options: {
           transpileOnly: isDebug,
           appendTsSuffixTo: [/\.vue$/],
+          compilerOptions: {
+            ...tsConfig.compilerOptions,
+            sourceMap: true,
+            inlineSourceMap: false,
+          },
         },
       },
 
