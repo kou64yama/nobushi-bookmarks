@@ -17,6 +17,8 @@ const store = new Vuex.Store<State>({
   strict: __DEV__,
 });
 
+let writeStatePromise = Promise.resolve();
+
 store.subscribe((mutation, state) => {
   console.info(
     `* ${mutation.type} ${inspect(mutation.payload, {
@@ -25,19 +27,23 @@ store.subscribe((mutation, state) => {
     })}`,
   );
 
-  fs.writeFile(
-    statePath,
-    JSON.stringify(state),
-    err => err && console.error(err),
+  writeStatePromise = new Promise(resolve =>
+    fs.writeFile(statePath, JSON.stringify(state), err => {
+      if (err) console.error(`Failed to write state: ${err}`);
+      resolve();
+    }),
   );
 });
 
 const initialStatePromise = new Promise<void>((resolve, reject) =>
   fs.readFile(statePath, 'utf8', (err, content) => {
-    // No file
-    if (err && err.code === 'ENOENT') return resolve();
-    // Other error
-    if (err) return reject(err);
+    if (err) {
+      // No file
+      if (err.code === 'ENOENT') return resolve();
+
+      console.error(`Failed to read state: ${err}`);
+      return reject(err);
+    }
 
     try {
       const initialState = JSON.parse(content);
@@ -50,6 +56,7 @@ const initialStatePromise = new Promise<void>((resolve, reject) =>
       store.replaceState(initialState);
       resolve();
     } catch (err) {
+      console.error(`Failed to read state: ${err}`);
       reject(err);
     }
   }),
@@ -130,4 +137,12 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.once('will-quit', async event => {
+  event.preventDefault();
+  console.info('Waiting for writing state...');
+  await writeStatePromise;
+  console.info('Complete writing state.');
+  app.quit();
 });
