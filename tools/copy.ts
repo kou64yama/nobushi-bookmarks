@@ -28,6 +28,7 @@ async function copy() {
           name: pkg.name,
           version: pkg.version,
           engines: pkg.engines,
+          dependencies: pkg.dependencies,
           main: 'main.js',
           scripts: {
             start: 'electron .',

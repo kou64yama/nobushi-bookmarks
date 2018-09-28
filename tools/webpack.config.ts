@@ -9,6 +9,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import nodeExternals from 'webpack-node-externals';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import tsConfig from '../tsconfig.json';
 
@@ -50,10 +51,8 @@ const config: webpack.Configuration = {
     path: resolvePath(BUILD_DIR, 'public/assets'),
     publicPath: '/assets/',
     pathinfo: isVerbose,
-    filename: isDebug ? '[name].js' : '[name].[chunkhash:8].js',
-    chunkFilename: isDebug
-      ? '[name].chunk.js'
-      : '[name].[chunkhash:8].chunk.js',
+    filename: '[name].js',
+    chunkFilename: '[name].chunk.js',
     // Point sourcemap entries to original disk location (format as URL on Windows)
     devtoolModuleFilenameTemplate: info =>
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
@@ -196,6 +195,14 @@ const config: webpack.Configuration = {
     ],
   },
 
+  externals: [
+    './chunk-manifest.json',
+    './asset-manifest.json',
+    nodeExternals({
+      whitelist: [reStyle, reImage],
+    }),
+  ],
+
   // Don't attempt to continue if there are any errors.
   bail: !isDebug,
 
@@ -218,7 +225,7 @@ const config: webpack.Configuration = {
 
   // Choose a developer tool to enhance debugging
   // https://webpack.js.org/configuration/devtool/#devtool
-  devtool: 'source-map',
+  devtool: isDebug ? 'inline-source-map' : 'source-map',
 };
 
 const rendererConfig = {
@@ -232,12 +239,21 @@ const rendererConfig = {
   },
 
   plugins: [
+    // https://vue-loader.vuejs.org/guide/#manual-configuration
     new VueLoaderPlugin(),
 
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
       __DEV__: isDebug,
+    }),
+
+    // Adds a banner to the top of each generated chunk
+    // https://webpack.js.org/plugins/banner-plugin/
+    new webpack.BannerPlugin({
+      banner: 'require("devtron").install();',
+      raw: true,
+      entryOnly: true,
     }),
 
     ...(isDebug
@@ -291,8 +307,15 @@ const mainConfig = {
     // Define free variables
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
-      'process.env.BROWSER': false,
       __DEV__: isDebug,
+    }),
+
+    // Adds a banner to the top of each generated chunk
+    // https://webpack.js.org/plugins/banner-plugin/
+    new webpack.BannerPlugin({
+      banner: 'require("source-map-support").install();',
+      raw: true,
+      entryOnly: false,
     }),
   ],
 };

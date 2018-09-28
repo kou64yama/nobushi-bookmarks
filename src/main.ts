@@ -10,20 +10,16 @@ Vue.config.productionTip = __DEV__;
 
 Vue.use(Vuex);
 
-//
-// Store
-// ---------------------------------------------------------------------
+const statePath = path.join(app.getPath('userData'), 'state.json');
 
 const store = new Vuex.Store<State>({
   modules,
   strict: __DEV__,
 });
 
-const statePath = path.join(app.getPath('userData'), 'state.json');
-
 store.subscribe((mutation, state) => {
   console.info(
-    `* ${inspect(mutation.type, { colors: true })} ${inspect(mutation.payload, {
+    `* ${mutation.type} ${inspect(mutation.payload, {
       colors: true,
       compact: true,
     })}`,
@@ -36,22 +32,23 @@ store.subscribe((mutation, state) => {
   );
 });
 
-const initialStatePromise = new Promise<State | null>((resolve, reject) =>
+const initialStatePromise = new Promise<void>((resolve, reject) =>
   fs.readFile(statePath, 'utf8', (err, content) => {
     // No file
-    if (err && err.code === 'ENOENT') return resolve(null);
+    if (err && err.code === 'ENOENT') return resolve();
     // Other error
     if (err) return reject(err);
 
     try {
       const initialState = JSON.parse(content);
       console.info(
-        `initialState = ${inspect(initialState, {
+        `* __INITIAL_STATE__ ${inspect(initialState, {
           colors: true,
           compact: true,
         })}`,
       );
-      resolve(initialState);
+      store.replaceState(initialState);
+      resolve();
     } catch (err) {
       reject(err);
     }
@@ -96,10 +93,7 @@ ipcMain.on('connect', (event: IpcMessageEvent) => {
 async function createWindow() {
   if (mainWindow) return mainWindow.show();
 
-  const initialState = await initialStatePromise;
-  if (initialState) {
-    store.replaceState(initialState);
-  }
+  await initialStatePromise;
 
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
@@ -113,6 +107,10 @@ async function createWindow() {
     event.preventDefault();
     shell.openExternal(url);
   });
+
+  if (__DEV__) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('close', () => {
     mainWindow = null;
