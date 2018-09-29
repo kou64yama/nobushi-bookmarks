@@ -1,6 +1,6 @@
 <template>
-  <v-container fill-height justify-center>
-    <h1>It works!</h1>
+  <v-container fluid class="pa-0">
+    <item-list/>
   </v-container>
 </template>
 

@@ -4,7 +4,10 @@ const routes: RouteConfig[] = [
   {
     name: 'home',
     path: '/',
-    component: () => import(/* webpackChunkName: 'home' */ './HomePage'),
+    components: {
+      default: () => import(/* webpackChunkName: 'home' */ './HomePage'),
+      fab: () => import(/* webpackChunkName: 'home' */ '@/components/AddItem'),
+    },
   },
 ];
 

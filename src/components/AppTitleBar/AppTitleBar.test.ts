@@ -27,7 +27,7 @@ const currentUser = {
   uid: 'mockUid',
 };
 
-describe('AppTitleBar', () => {
+xdescribe('AppTitleBar', () => {
   it('should render correctly with currentUser', () => {
     const wrapper = mount(AppTitleBar, {
       stubs,

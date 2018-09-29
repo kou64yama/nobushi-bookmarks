@@ -1,0 +1,6 @@
+appId: com.kou64yama.NobushiBookmark
+productName: Nobushi Bookmark
+
+directories:
+  output: dist
+  app: build

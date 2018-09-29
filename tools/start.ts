@@ -6,11 +6,11 @@ import clean from './clean';
 import copy from './copy';
 import webpackConfig from './webpack.config';
 
+const enableInspect = process.argv.includes('--inspect');
 const electron = path.join(
   __dirname,
-  process.platform.startsWith('win')
-    ? '../node_modules/.bin/electron.cmd'
-    : '../node_modules/.bin/electron',
+  '../node_modules/.bin',
+  process.platform.startsWith('win') ? 'electron.cmd' : 'electron',
 );
 
 // https://webpack.js.org/configuration/watch/#watchoptions
@@ -22,9 +22,26 @@ const watchOptions = {
   // ignored: /node_modules/,
 };
 
-process.argv.push('--watch');
+let app: cp.ChildProcess | null = null;
+
+async function runApp() {
+  if (app) return app;
+
+  app = cp.spawn(electron, [...(enableInspect ? ['--inspect'] : []), 'build'], {
+    cwd: path.join(__dirname, '..'),
+    stdio: 'inherit',
+  });
+  app.once('exit', async code => {
+    app = null;
+    if (code) process.exit(code);
+    await run(runApp);
+  });
+  return app;
+}
 
 async function start() {
+  process.argv.push('--watch');
+
   await run(clean);
   await run(copy);
 
@@ -46,17 +63,7 @@ async function start() {
     ),
   );
 
-  let app: cp.ChildProcess | null = null;
-  (function spawn() {
-    app = cp.spawn(electron, ['build'], {
-      cwd: path.join(__dirname, '..'),
-      stdio: 'inherit',
-    });
-    app.once('close', code => {
-      if (code) process.exit(code);
-      spawn();
-    });
-  })();
+  await run(runApp);
 }
 
 export default start;
