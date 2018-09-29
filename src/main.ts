@@ -1,106 +1,51 @@
 import path from 'path';
-import fs from 'fs';
-import { inspect } from 'util';
 import { app, shell, ipcMain, BrowserWindow, IpcMessageEvent } from 'electron';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import modules, { State } from './store';
+import createLogger from './store/plugins/logger';
+import createFileState from './store/plugins/fileState';
+import { CONNECT, INITIAL_STATE, DISPATCH, COMMIT } from './store/plugins/ipc';
 
 Vue.config.productionTip = __DEV__;
-
 Vue.use(Vuex);
+
+if (__DEV__) {
+  app.setPath('userData', path.join(app.getAppPath(), '../data'));
+}
+
+console.info(
+  '------------------------------------------------------------------------',
+);
+console.info(`App Path: ${app.getAppPath()}`);
+console.info(`User Data: ${app.getPath('userData')}`);
+console.info(
+  '------------------------------------------------------------------------',
+);
 
 const statePath = path.join(app.getPath('userData'), 'state.json');
 
+const fileState = createFileState<State>(statePath);
 const store = new Vuex.Store<State>({
   modules,
+  plugins: [
+    fileState,
+    ...(__DEV__ ? [createLogger({ colors: true, compact: true })] : []),
+  ],
   strict: __DEV__,
 });
 
-let writeStatePromise = Promise.resolve();
-
-store.subscribe((mutation, state) => {
-  console.info(
-    `* ${mutation.type} ${inspect(mutation.payload, {
-      colors: true,
-      compact: true,
-    })}`,
-  );
-
-  writeStatePromise = new Promise(resolve =>
-    fs.writeFile(statePath, JSON.stringify(state), err => {
-      if (err) console.error(`Failed to write state: ${err}`);
-      resolve();
-    }),
-  );
-});
-
-const initialStatePromise = new Promise<void>((resolve, reject) =>
-  fs.readFile(statePath, 'utf8', (err, content) => {
-    if (err) {
-      // No file
-      if (err.code === 'ENOENT') return resolve();
-
-      console.error(`Failed to read state: ${err}`);
-      return reject(err);
-    }
-
-    try {
-      const initialState = JSON.parse(content);
-      console.info(
-        `* __INITIAL_STATE__ ${inspect(initialState, {
-          colors: true,
-          compact: true,
-        })}`,
-      );
-      store.replaceState(initialState);
-      resolve();
-    } catch (err) {
-      console.error(`Failed to read state: ${err}`);
-      reject(err);
-    }
-  }),
-);
-
 //
-// IPC event listeners
-// ---------------------------------------------------------------------
-
-ipcMain.on(
-  'dispatch',
-  async (event: IpcMessageEvent, id: string, type: string, payload?: any) => {
-    try {
-      const value = await store.dispatch(type, payload);
-      event.sender.send(`dispatch:${id}`, null, value);
-    } catch (err) {
-      event.sender.send(`dispatch:${id}`, err);
-    }
-  },
-);
-
-//
-// Ready
+// Main window
 // ---------------------------------------------------------------------
 
 let mainWindow: BrowserWindow | null = null;
-let unsubscribe: (() => void) | null = null;
-
-ipcMain.on('connect', (event: IpcMessageEvent) => {
-  if (!mainWindow || event.sender !== mainWindow.webContents) return;
-  console.info('connected.');
-
-  event.sender.send('initialState', store.state);
-
-  if (unsubscribe) unsubscribe();
-  unsubscribe = store.subscribe(mutation =>
-    event.sender.send('commit', mutation),
-  );
-});
+let unsubscribe: (() => void) = () => {};
 
 async function createWindow() {
   if (mainWindow) return mainWindow.show();
 
-  await initialStatePromise;
+  await fileState.read();
 
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
@@ -115,16 +60,53 @@ async function createWindow() {
     shell.openExternal(url);
   });
 
-  if (__DEV__) {
+  if (__DEV__ && process.argv.includes('--inspect')) {
     mainWindow.webContents.openDevTools();
   }
 
-  mainWindow.on('close', () => {
+  mainWindow.once('close', () => {
     mainWindow = null;
-    if (unsubscribe) unsubscribe();
-    console.info('disconnected.');
+    unsubscribe();
   });
 }
+
+//
+// IPC Event handling
+// ---------------------------------------------------------------------
+
+ipcMain.on(CONNECT, (event: IpcMessageEvent) => {
+  if (!mainWindow || event.sender.id !== mainWindow.webContents.id) return;
+
+  unsubscribe();
+  event.sender.send(INITIAL_STATE, store.state);
+
+  const unsubscribeInternal = store.subscribe(mutation => {
+    event.sender.send(COMMIT, mutation);
+  });
+  unsubscribe = () => {
+    unsubscribeInternal();
+    unsubscribe = () => {};
+    console.info('disconnected');
+  };
+
+  console.info('connected.');
+});
+
+ipcMain.on(
+  DISPATCH,
+  async (event: IpcMessageEvent, id: string, type: string, payload?: any) => {
+    try {
+      const value = await store.dispatch(type, payload);
+      event.sender.send(`${DISPATCH}:${id}`, null, value);
+    } catch (err) {
+      event.sender.send(`${DISPATCH}:${id}`, err);
+    }
+  },
+);
+
+//
+// Start
+// ---------------------------------------------------------------------
 
 app.on('ready', createWindow);
 app.on('activate', createWindow);
@@ -133,7 +115,7 @@ app.on('activate', createWindow);
 // Quit
 // ---------------------------------------------------------------------
 
-app.on('window-all-closed', () => {
+app.once('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -142,7 +124,7 @@ app.on('window-all-closed', () => {
 app.once('will-quit', async event => {
   event.preventDefault();
   console.info('Waiting for writing state...');
-  await writeStatePromise;
+  await fileState.write();
   console.info('Complete writing state.');
   app.quit();
 });
